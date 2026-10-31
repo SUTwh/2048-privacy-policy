@@ -1,246 +1,203 @@
-import { BrowserStore } from '../model/BrowserStore';
-import { IapManager } from '../model/IapManager';
-import { AppTheme } from '../model/AppTheme';
-import { display } from '@kit.ArkUI';
-
-@Entry
-@Component
-struct PrivacyPage {
-  @StorageProp('nightMode') nightModeOn: boolean = false;
-  @State agreePressed: boolean = false;
-  @State disagreePressed: boolean = false;
-  private uiScale: number = 1;
-  private screenW: number = 233;
-  private safeInset: number = 16;
-  private pageScroller: Scroller = new Scroller();
-
-  aboutToAppear(): void {
-    this.initScreenScale();
-    this.requestPrivacyFocus();
-    setTimeout(() => {
-      this.requestPrivacyFocus();
-    }, 500);
-  }
-
-  onPageShow(): void {
-    if (BrowserStore.isPrivacyAgreed()) {
-      this.agree();
-      return;
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#2B1503">
+  <title>秋水工具箱 · 隐私政策</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --text: #f7ead2;
+      --muted: #cdb894;
+      --accent: #ffc46b;
+      --line: rgba(255, 214, 153, 0.22);
     }
-    this.requestPrivacyFocus();
-    setTimeout(() => {
-      this.requestPrivacyFocus();
-    }, 300);
-  }
 
-  private requestPrivacyFocus(): void {
-    try {
-      this.getUIContext().getFocusController().requestFocus('privacyScroll');
-    } catch (err) {
-      console.warn(`[QiushuiPrivacy] requestFocus failed: ${err}`);
+    * {
+      box-sizing: border-box;
     }
-  }
 
-  onBackPress(): boolean {
-    return false;
-  }
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      background: radial-gradient(circle at 50% 0%, #4a2a0b 0%, #1b0f03 55%, #0d0702 100%);
+      color: var(--text);
+    }
 
-  private initScreenScale(): void {
-    try {
-      const disp = display.getDefaultDisplaySync();
-      if (disp.densityPixels > 0) {
-        this.uiScale = disp.width / disp.densityPixels / 233;
-        this.screenW = disp.width / disp.densityPixels;
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "HarmonyOS Sans SC",
+        "Microsoft YaHei", sans-serif;
+      line-height: 1.75;
+      -webkit-text-size-adjust: 100%;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    main {
+      width: min(100%, 620px);
+      margin: 0 auto;
+      padding: clamp(24px, 14.6vmin, 64px) clamp(16px, 14.6vmin, 48px);
+    }
+
+    header {
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 14px;
+      margin-bottom: 18px;
+    }
+
+    .brand {
+      font-size: clamp(12px, 3.4vmin, 14px);
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      color: #fff6e3;
+      font-size: clamp(20px, 6.4vmin, 32px);
+      line-height: 1.25;
+    }
+
+    .meta {
+      font-size: clamp(12px, 3.4vmin, 14px);
+      color: var(--muted);
+    }
+
+    section {
+      margin: 0 0 12px;
+      padding: clamp(12px, 4.4vmin, 18px);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255, 235, 200, 0.045);
+    }
+
+    h2 {
+      margin: 0 0 8px;
+      color: var(--accent);
+      font-size: clamp(15px, 4.6vmin, 19px);
+    }
+
+    p,
+    li {
+      margin: 0 0 8px;
+      font-size: clamp(14px, 4.2vmin, 17px);
+    }
+
+    ul {
+      margin: 6px 0 0;
+      padding-left: 1.15em;
+    }
+
+    li {
+      margin-bottom: 6px;
+    }
+
+    strong {
+      color: #ffe6bc;
+    }
+
+    a {
+      color: var(--accent);
+      word-break: break-all;
+    }
+
+    footer {
+      margin-top: 18px;
+      padding-top: 14px;
+      padding-bottom: max(8px, env(safe-area-inset-bottom));
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: clamp(11px, 3.2vmin, 13px);
+      text-align: center;
+    }
+
+    @media (max-width: 320px) {
+      section {
+        border-radius: 12px;
       }
-    } catch (err) {
-      console.warn(`[QiushuiPrivacy] initScreenScale failed: ${err}`);
     }
-    this.safeInset = Math.max(this.scaledSize(10), Math.round(this.screenW * 0.1465));
-  }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div class="brand">秋水工具箱</div>
+      <h1>隐私政策</h1>
+      <div class="meta">更新日期：2026年10月31日</div>
+    </header>
 
-  private scaledSize(v: number): number {
-    return Math.round(v * this.uiScale * 10) / 10;
-  }
+    <section>
+      <h2>一、应用与运营者</h2>
+      <p>本应用为“秋水工具箱”HarmonyOS 手表端工具应用。</p>
+      <p>开发者/运营者：秋水工具箱开发者。</p>
+      <p>联系方式：<a href="mailto:dao_1999@qq.com">dao_1999@qq.com</a>；QQ 群：1038093413。</p>
+      <p>本政策说明我们如何处理您的信息，以及您享有的权利。</p>
+    </section>
 
-  private agree(): void {
-    const firstAgree: boolean = !BrowserStore.isPrivacyAgreed();
-    BrowserStore.setPrivacyAgreed(true);
-    if (firstAgree) {
-      const ctx = BrowserStore.abilityContext;
-      if (ctx !== undefined) {
-        IapManager.restore(ctx);
-      }
-    }
-    try {
-      this.getUIContext().getRouter().replaceUrl({ url: 'pages/Home' });
-    } catch (err) {
-      console.warn(`[QiushuiPrivacy] agree failed: ${err}`);
-    }
-  }
+    <section>
+      <h2>二、我们如何处理信息</h2>
+      <ul>
+        <li>本应用不要求注册账号，不主动收集姓名、手机号、身份证号、位置、通讯录、相机或麦克风信息。</li>
+        <li>本地保存：应用设置、书签、浏览历史、阅读进度、会员状态、邮箱地址/服务器/端口，以及经系统关键资产存储服务加密保存的邮箱授权码。上述数据保存在本机；卸载应用或清除应用数据会删除（关键资产默认不随卸载保留）。</li>
+        <li>网页浏览：您输入的网址和网页请求会发送到对应网站，由该网站按其隐私政策处理；我们不会将您的浏览历史上传到自有服务器。</li>
+        <li>邮箱：您配置的邮箱地址、授权码、收件人、主题和正文会传输到您选择的邮件服务商（如 163/QQ/Gmail）以完成收信和发信。我们不运营邮件服务器，不保存您的邮件正文。新邮件通知可能在设备上显示发件人和主题，可在系统通知设置中关闭。</li>
+        <li>文件传输：FTP 功能仅在局域网内由您的电脑/手机与手表直接传输文件，我们不上传到自有服务器。</li>
+        <li>会员与支付：会员购买由华为 IAP 处理；我们仅接收商品 ID、购买时间、订单状态和有效期，不接触银行卡号或支付密码。</li>
+        <li>传感器：加速度传感器用于第二桌面的倾斜效果；该功能未开放时不会读取，也不用于广告或追踪。</li>
+      </ul>
+    </section>
 
-  private disagree(): void {
-    const ctx = BrowserStore.abilityContext;
-    if (ctx === undefined) {
-      return;
-    }
-    try {
-      ctx.terminateSelf();
-    } catch (err) {
-      console.warn(`[QiushuiPrivacy] terminate failed: ${err}`);
-    }
-  }
+    <section>
+      <h2>三、权限说明</h2>
+      <ul>
+        <li>网络权限：访问网页、收发邮件、局域网文件传输。</li>
+        <li>网络状态权限：判断当前网络是否可用。</li>
+        <li>加速度传感器权限：第二桌面倾斜效果。</li>
+        <li>通知权限：新邮件本地提醒，可在系统设置关闭。</li>
+      </ul>
+      <p>应用不会在您同意本政策前查询会员订单或使用上述个人信息。</p>
+    </section>
 
-  @Builder
-  section(title: string, body: string) {
-    Column({ space: this.scaledSize(2) }) {
-      Text(title)
-        .fontSize(this.scaledSize(10))
-        .fontColor('#FFC46B')
-        .fontWeight(FontWeight.Medium)
-      Text(body)
-        .fontSize(this.scaledSize(8))
-        .fontColor('rgba(255, 246, 227, 0.92)')
-        .lineHeight(this.scaledSize(13))
-    }
-    .alignItems(HorizontalAlign.Start)
-    .width('100%')
-  }
+    <section>
+      <h2>四、第三方服务</h2>
+      <p>本应用使用华为 IAP 完成会员支付与订单校验；使用您选择的邮件服务商完成邮件收发；您访问的网站会按其隐私政策处理网页请求；通过华为应用市场安装时由应用市场提供分发服务。</p>
+      <p>本应用不含广告、统计分析或第三方推送 SDK。</p>
+    </section>
 
-  build() {
-    Scroll(this.pageScroller) {
-      Column({ space: this.scaledSize(9) }) {
-        Text('隐私政策')
-          .fontSize(this.scaledSize(14))
-          .fontColor('#FFF6E3')
-          .fontWeight(FontWeight.Bold)
-          .margin({ bottom: this.scaledSize(2) })
+    <section>
+      <h2>五、数据存储与安全</h2>
+      <p>邮箱授权码使用系统关键资产存储服务加密保存；邮箱收发使用 TLS 加密连接；网页是否加密取决于您访问的网站；FTP 仅限局域网且不加密，请勿传输敏感文件。</p>
+      <p>我们会采取合理措施保护数据，但互联网传输无法保证绝对安全。</p>
+    </section>
 
-        this.section('一、应用与运营者',
-          '本应用为“秋水工具箱”HarmonyOS 手表端工具应用。\n开发者/运营者：秋水工具箱开发者。\n联系方式：dao_1999@qq.com；QQ 群：1038093413。\n本政策说明我们如何处理您的信息，以及您享有的权利。')
+    <section>
+      <h2>六、您的权利</h2>
+      <p>您可以在应用内清除浏览历史/书签；可通过系统设置清除应用数据或卸载应用来删除本地数据并撤回同意。</p>
+      <p>会员订单信息由华为账号和 IAP 管理，如需删除请联系我们或华为客服。</p>
+    </section>
 
-        this.section('二、我们如何处理信息',
-          '1. 本应用不要求注册账号，不主动收集姓名、手机号、身份证号、位置、通讯录、相机或麦克风信息。\n' +
-          '2. 本地保存：应用设置、书签、浏览历史、阅读进度、会员状态、邮箱地址/服务器/端口，以及经系统关键资产存储服务加密保存的邮箱授权码。上述数据保存在本机；卸载应用或清除应用数据会删除（关键资产默认不随卸载保留）。\n' +
-          '3. 网页浏览：您输入的网址和网页请求会发送到对应网站，由该网站按其隐私政策处理；我们不会将您的浏览历史上传到自有服务器。\n' +
-          '4. 邮箱：您配置的邮箱地址、授权码、收件人、主题和正文会传输到您选择的邮件服务商（如 163/QQ/Gmail）以完成收信和发信。我们不运营邮件服务器，不保存您的邮件正文。新邮件通知可能在设备上显示发件人和主题，可在系统通知设置中关闭。\n' +
-          '5. 文件传输：FTP 功能仅在局域网内由您的电脑/手机与手表直接传输文件，我们不上传到自有服务器。\n' +
-          '6. 会员与支付：会员购买由华为 IAP 处理；我们仅接收商品 ID、购买时间、订单状态和有效期，不接触银行卡号或支付密码。\n' +
-          '7. 传感器：加速度传感器用于第二桌面的倾斜效果；该功能未开放时不会读取，也不用于广告或追踪。')
+    <section>
+      <h2>七、未成年人保护</h2>
+      <p>本应用不面向未成年人单独收集信息；未成年人应在监护人指导下使用。</p>
+    </section>
 
-        this.section('三、权限说明',
-          '网络权限：访问网页、收发邮件、局域网文件传输。\n' +
-          '网络状态权限：判断当前网络是否可用。\n' +
-          '加速度传感器权限：第二桌面倾斜效果。\n' +
-          '通知权限：新邮件本地提醒，可在系统设置关闭。\n' +
-          '应用不会在您同意本政策前查询会员订单或使用上述个人信息。')
+    <section>
+      <h2>八、政策更新</h2>
+      <p>本政策更新后会在应用内公示；涉及重大变更时会再次征得您的同意。</p>
+    </section>
 
-        this.section('四、第三方服务',
-          '本应用使用华为 IAP 完成会员支付与订单校验；使用您选择的邮件服务商完成邮件收发；您访问的网站会按其隐私政策处理网页请求；通过华为应用市场安装时由应用市场提供分发服务。\n' +
-          '本应用不含广告、统计分析或第三方推送 SDK。')
+    <section>
+      <h2>九、联系我们</h2>
+      <p>邮箱：<a href="mailto:dao_1999@qq.com">dao_1999@qq.com</a></p>
+      <p>QQ 群：1038093413</p>
+    </section>
 
-        this.section('五、数据存储与安全',
-          '邮箱授权码使用系统关键资产存储服务加密保存；邮箱收发使用 TLS 加密连接；网页是否加密取决于您访问的网站；FTP 仅限局域网且不加密，请勿传输敏感文件。\n' +
-          '我们会采取合理措施保护数据，但互联网传输无法保证绝对安全。')
-
-        this.section('六、您的权利',
-          '您可以在应用内清除浏览历史/书签；可通过系统设置清除应用数据或卸载应用来删除本地数据并撤回同意。\n' +
-          '会员订单信息由华为账号和 IAP 管理，如需删除请联系我们或华为客服。')
-
-        this.section('七、未成年人保护',
-          '本应用不面向未成年人单独收集信息；未成年人应在监护人指导下使用。')
-
-        this.section('八、政策更新',
-          '本政策更新后会在应用内公示；涉及重大变更时会再次征得您的同意。')
-
-        this.section('九、联系我们',
-          '邮箱：dao_1999@qq.com\nQQ 群：1038093413')
-
-        Row({ space: this.scaledSize(8) }) {
-          Stack() {
-            Text('不同意')
-              .fontSize(this.scaledSize(9))
-              .fontColor('#FFE9C4')
-              .fontWeight(FontWeight.Medium)
-          }
-          .width(this.scaledSize(76))
-          .height(this.scaledSize(30))
-          .borderRadius(this.scaledSize(15))
-          .backgroundColor(this.disagreePressed ? 'rgba(90, 58, 20, 0.95)' : 'rgba(58, 34, 10, 0.92)')
-          .border({ width: 1, color: 'rgba(255, 200, 120, 0.65)' })
-          .scale({
-            x: this.disagreePressed ? 0.96 : 1,
-            y: this.disagreePressed ? 0.96 : 1
-          })
-          .animation({ duration: 110, curve: Curve.EaseOut })
-          .onTouch((event: TouchEvent) => {
-            if (event.type === TouchType.Down) {
-              this.disagreePressed = true;
-            } else if (event.type === TouchType.Up || event.type === TouchType.Cancel) {
-              this.disagreePressed = false;
-            }
-          })
-          .onClick(() => {
-            this.disagree();
-          })
-
-          Stack() {
-            Text('同意')
-              .fontSize(this.scaledSize(9))
-              .fontColor('#3A1F03')
-              .fontWeight(FontWeight.Bold)
-          }
-          .width(this.scaledSize(76))
-          .height(this.scaledSize(30))
-          .borderRadius(this.scaledSize(15))
-          .backgroundColor(this.agreePressed ? 'rgba(255, 196, 107, 0.95)' : '#FFC46B')
-          .border({ width: 1, color: 'rgba(255, 224, 170, 0.9)' })
-          .scale({
-            x: this.agreePressed ? 0.96 : 1,
-            y: this.agreePressed ? 0.96 : 1
-          })
-          .animation({ duration: 110, curve: Curve.EaseOut })
-          .onTouch((event: TouchEvent) => {
-            if (event.type === TouchType.Down) {
-              this.agreePressed = true;
-            } else if (event.type === TouchType.Up || event.type === TouchType.Cancel) {
-              this.agreePressed = false;
-            }
-          })
-          .onClick(() => {
-            this.agree();
-          })
-        }
-        .margin({ top: this.scaledSize(12) })
-      }
-      .width('100%')
-      .padding({
-        left: this.safeInset,
-        right: this.safeInset,
-        top: this.safeInset,
-        bottom: this.safeInset + this.scaledSize(12)
-      })
-    }
-    .width('100%')
-    .height('100%')
-    .scrollBar(BarState.Off)
-    .edgeEffect(EdgeEffect.Spring, { alwaysEnabled: true })
-    .linearGradient({
-      angle: 160,
-      colors: [[AppTheme.pageTop(this.nightModeOn), 0.0], [AppTheme.pageMid(this.nightModeOn), 0.5], [AppTheme.pageBottom(this.nightModeOn), 1.0]]
-    })
-    .id('privacyScroll')
-    .focusable(true)
-    .focusOnTouch(true)
-    .defaultFocus(true)
-    .onAppear(() => {
-      this.requestPrivacyFocus();
-    })
-  }
-
-  pageTransition() {
-    PageTransitionEnter({ type: RouteType.None, duration: 200, curve: Curve.EaseOut })
-      .opacity(0)
-    PageTransitionExit({ type: RouteType.None, duration: 200, curve: Curve.EaseInOut })
-      .opacity(0)
-  }
-}
+    <footer>
+      备案号：鄂ICP备2026059603号-1A
+    </footer>
+  </main>
+</body>
+</html>
